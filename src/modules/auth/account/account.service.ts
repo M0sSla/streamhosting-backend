@@ -8,6 +8,15 @@ export class AccountService {
 
     public constructor(private readonly prismaService: PrismaService) {}
 
+    public async me(id: string) {
+        const user = await this.prismaService.user.findUnique({
+            where: {
+                id
+            }
+        })
+    }
+
+
     public async findAll() {
         const users = await this.prismaService.user.findMany()
 
