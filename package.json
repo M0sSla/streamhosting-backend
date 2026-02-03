@@ -18,6 +18,7 @@
 		},
 		"dependencies": {
 				"@apollo/server": "^4.11.3",
+				"@nestjs-modules/mailer": "^2.0.2",
 				"@nestjs/apollo": "^13.0.3",
 				"@nestjs/common": "^11.0.12",
 				"@nestjs/config": "^4.0.1",
@@ -25,6 +26,10 @@
 				"@nestjs/graphql": "^13.0.3",
 				"@nestjs/mapped-types": "*",
 				"@nestjs/platform-express": "^11.0.12",
+				"@prisma/client": "^5.21.1",
+				"@react-email/components": "^1.0.6",
+				"@react-email/html": "^0.0.12",
+				"@react-email/tailwind": "^2.0.3",
 				"argon2": "^0.41.1",
 				"class-transformer": "^0.5.1",
 				"class-validator": "^0.14.1",
@@ -36,12 +41,18 @@
 				"graphql": "^16.10.0",
 				"i18n-iso-countries": "^7.14.0",
 				"ioredis": "^5.6.0",
+				"prisma": "^5.21.1",
+				"react": "^19.2.4",
+				"react-dom": "18.3.1",
 				"reflect-metadata": "^0.2.2",
-				"rxjs": "^7.8.2"
+				"rxjs": "^7.8.2",
+				"uuid": "^13.0.0"
 		},
 		"devDependencies": {
 				"@types/cookie-parser": "^1.4.8",
 				"@types/express-session": "^1.18.1",
-				"@types/geoip-lite": "^1.4.4"
+				"@types/geoip-lite": "^1.4.4",
+				"@types/react": "^19.2.10",
+				"@types/uuid": "^11.0.0"
 		}
 }
