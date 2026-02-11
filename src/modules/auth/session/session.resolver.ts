@@ -3,7 +3,7 @@ import { SessionService } from './session.service';
 import { UserModel } from '../account/models/user.model';
 import { GqlContext } from '@/src/shared/types/gql-context.types';
 import { LoginInput } from './inputs/login.input';
-import { userAgent } from '@/src/shared/decorators/user-agent.decorator';
+import { UserAgent } from '@/src/shared/decorators/user-agent.decorator';
 import { Authorization } from '@/src/shared/decorators/auth.decorator';
 
 import { SessionModel } from './models/session.model'
@@ -29,7 +29,7 @@ export class SessionResolver {
   public async login(
     @Context() { req }: GqlContext,
     @Args('data') input: LoginInput,
-    @userAgent() userAgent: string
+    @UserAgent() userAgent: string
   ) {
     return this.sessionService.login(req, input, userAgent)
   }
