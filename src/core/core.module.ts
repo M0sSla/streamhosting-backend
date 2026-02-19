@@ -14,6 +14,7 @@ import { PasswordRecoveryModule } from '../modules/auth/password-recovery/passwo
 import { TotpModule } from '../modules/auth/totp/totp.module';
 import { DeactivateModule } from '../modules/auth/deactivate/deactivate.module';
 import { CronModule } from '../modules/cron/cron.module';
+import { StorageModule } from '../modules/libs/storage/storage.module';
 
 @Module({
   imports: [
@@ -30,10 +31,11 @@ import { CronModule } from '../modules/cron/cron.module';
     PrismaModule,
     RedisModule,
     CronModule,
+    MailModule,
+    StorageModule,
     AccountModule,
     SessionModule,
     VerificationModule,
-    MailModule,
     PasswordRecoveryModule,
     TotpModule,
     DeactivateModule,
