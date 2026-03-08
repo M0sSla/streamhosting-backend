@@ -15,54 +15,54 @@ export class ProfileService {
         private readonly storageService: StorageService
     ) {}
 
-    public async changeAvatar(user: User, file: Upload) {
-        if(user.avatar) {
-            await this.storageService.remove(user.avatar);
-        }
+    // public async changeAvatar(user: User, file: Upload) {
+    //     if(user.avatar) {
+    //         await this.storageService.remove(user.avatar);
+    //     }
 
-        const chunks: Buffer[] = []
+    //     const chunks: Buffer[] = []
 
-        for await(const chunk of file.createReadStream()) {
-            chunks.push(chunk)
-        }
+    //     for await(const chunk of file.createReadStream()) {
+    //         chunks.push(chunk)
+    //     }
 
-        const buffer = Buffer.concat(chunks);
+    //     const buffer = Buffer.concat(chunks);
 
-        // Если что, здесь лучше использовать id, а не username, но для сидера удобнее так
-        const fileName = `/channels/${user.username}.wepb`
+    //     // Если что, здесь лучше использовать id, а не username, но для сидера удобнее так
+    //     const fileName = `/channels/${user.username}.wepb`
 
-        if (file.filename && file.filename.endsWith('.gif')) {
-            const processedBuffer = await sharp(buffer, { animated: true })
-            .resize(512, 512)
-            .webp()
-            .toBuffer()
+    //     if (file.filename && file.filename.endsWith('.gif')) {
+    //         const processedBuffer = await sharp(buffer, { animated: true })
+    //         .resize(512, 512)
+    //         .webp()
+    //         .toBuffer()
 
-            await this.storageService.upload(
-                fileName, 
-                processedBuffer, 
-                'image/webp'
-            )
-        }
-        else {
-            const processedBuffer = await sharp(buffer)
-            .resize(512, 512)
-            .webp()
-            .toBuffer()
+    //         await this.storageService.upload(
+    //             fileName, 
+    //             processedBuffer, 
+    //             'image/webp'
+    //         )
+    //     }
+    //     else {
+    //         const processedBuffer = await sharp(buffer)
+    //         .resize(512, 512)
+    //         .webp()
+    //         .toBuffer()
 
-            await this.storageService.upload(
-                fileName, 
-                processedBuffer, 
-                'image/webp'
-            )
-        }
+    //         await this.storageService.upload(
+    //             fileName, 
+    //             processedBuffer, 
+    //             'image/webp'
+    //         )
+    //     }
 
-        await this.prismaService.user.update({
-            where: { id: user.id },
-            data: { avatar: fileName }
-        })
+    //     await this.prismaService.user.update({
+    //         where: { id: user.id },
+    //         data: { avatar: fileName }
+    //     })
 
-        return true
-    }
+    //     return true
+    // }
 
     public async removeAvatar(user: User) {
         if (!user.avatar) {

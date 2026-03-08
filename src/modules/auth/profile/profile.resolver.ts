@@ -15,14 +15,15 @@ import { SocialLinkModel } from './models/social-link.model';
 export class ProfileResolver {
   public constructor(private readonly profileService: ProfileService) {}
 
-  @Authorization()
-  @Mutation(() => Boolean, { name: 'changeProfileAvatar' })
-  public async changeAvatar(
-    @Authorized() user: User, 
-    @Args('avatar', {type: () => GraphQLUpload}, FileValidationPipe) avatar: Upload
-  ) {
-    return this.profileService.changeAvatar(user, avatar);
-  }
+	// @Authorization()
+	// @Mutation(() => Boolean, { name: 'changeProfileAvatar' })
+	// public async changeAvatar(
+	// 	@Authorized() user: User,
+	// 	@Args('avatar', { type: () => GraphQLUpload }, FileValidationPipe)
+	// 	avatar: Upload
+	// ) {
+	// 	return this.profileService.changeAvatar(user, avatar)
+	// }
 
   @Authorization()
   @Mutation(() => Boolean, { name: 'removeProfileAvatar' })
