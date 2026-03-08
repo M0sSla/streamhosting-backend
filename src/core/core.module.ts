@@ -17,6 +17,9 @@ import { CronModule } from '../modules/cron/cron.module';
 import { StorageModule } from '../modules/libs/storage/storage.module';
 import { ProfileModule } from '../modules/auth/profile/profile.module';
 import { StreamModule } from '../modules/stream/stream.module';
+import { LivekitModule } from '../modules/libs/livekit/livekit.module';
+import { getLiveKitConfig } from './config/livekit.config';
+import { IngressModule } from '../modules/stream/ingress/ingress.module';
 
 @Module({
   imports: [
@@ -35,6 +38,11 @@ import { StreamModule } from '../modules/stream/stream.module';
     CronModule,
     MailModule,
     StorageModule,
+    LivekitModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: getLiveKitConfig,
+			inject: [ConfigService]
+		}),
     AccountModule,
     ProfileModule,
     SessionModule,
@@ -43,6 +51,7 @@ import { StreamModule } from '../modules/stream/stream.module';
     TotpModule,
     DeactivateModule,
     StreamModule,
+    IngressModule,
   ]
 })
 export class CoreModule {}
