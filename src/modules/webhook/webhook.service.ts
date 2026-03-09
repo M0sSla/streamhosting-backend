@@ -5,8 +5,8 @@ import { LivekitService } from '../libs/livekit/livekit.service';
 @Injectable()
 export class WebhookService {
     public constructor(
-        public readonly prismaService: PrismaService,
-        public readonly livekitService: LivekitService
+        private readonly prismaService: PrismaService,
+        private readonly livekitService: LivekitService
     ) {}
 
     public async recieveWebhookLivekit(body: string, autharization: string) {

@@ -1,6 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { StreamService } from './stream.service';
-import { StreamModel } from './models/stream-model';
+import { StreamModel } from './models/stream.model';
 import { FiltersInput } from './inputs/filters.input';
 import { Authorization } from '@/src/shared/decorators/auth.decorator';
 import { Authorized } from '@/src/shared/decorators/authorized.decorator'
@@ -9,6 +9,8 @@ import { User } from '@/prisma/generated';
 import { FileValidationPipe } from '@/src/shared/pipes/file-validation.pipe';
 import * as Upload from 'graphql-upload/Upload.js'
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
+import { GenerateStreamTokenInput } from './inputs/generate-stream-token.input';
+import { GenerateStreamTokenModel } from './models/generate-stream-token.model';
 
 @Resolver('Stream')
 export class StreamResolver {
@@ -49,5 +51,12 @@ export class StreamResolver {
 	@Mutation(() => Boolean, { name: 'removeStreamThumbnail' })
 	public async removeThumbnail(@Authorized() user: User) {
 		return this.streamService.removeThumbnail(user)
+	}
+
+	@Mutation(() => GenerateStreamTokenModel, { name: 'generateStreamToken' })
+	public async generateToken(
+		@Args('data') input: GenerateStreamTokenInput
+	) {
+		return this.streamService.generateToken(input)
 	}
 }
