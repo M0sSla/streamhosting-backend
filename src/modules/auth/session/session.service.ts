@@ -1,12 +1,11 @@
 import { PrismaService } from '@/src/core/prisma/prisma.service';
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { LoginInput } from './inputs/login.input';
 import { verify } from 'argon2';
 import type { Request } from 'express'
 import { ConfigService } from '@nestjs/config';
 import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
 import { RedisService } from '@/src/core/redis/redis.service';
-import session from 'express-session';
 import { destroySession, saveSession } from '@/src/shared/utils/session.util';
 import { VerificationService } from '../verification/verification.service';
 import { TOTP } from 'otpauth';
@@ -54,15 +53,16 @@ export class SessionService {
     }
 
     public async findCurrent(req: Request) {
-        const sessionId = req.session.id
 
+        const sessionId = req.session.id
+        
         const sessionData = await this.redisService.get(
             `${this.configService.getOrThrow<string>('SESSION_FOLDER')}${sessionId}`
         )
 
         const session = JSON.parse(sessionData as string)
 
-        return {
+                return {
             ...session,
             id: sessionId
         }
@@ -80,9 +80,9 @@ export class SessionService {
             }
         })
 
-        if (!user) {
-            throw new NotFoundException('Пользователь не найден')
-        }
+        if (!user || user.isDeactivated) {
+			throw new NotFoundException('Пользователь не найден')
+		}
 
         const isValidPassword = await verify(user.password, password)
 
@@ -120,7 +120,6 @@ export class SessionService {
 
 
         const metadata = getSessionMetadata(req, userAgent)
-
         return saveSession(req, user, metadata)
     }
 

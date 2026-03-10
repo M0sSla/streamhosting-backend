@@ -22,7 +22,7 @@ export class SessionResolver {
   @Authorization()
 	@Query(() => SessionModel, { name: 'findCurrentSession' })
 	public async findCurrent(@Context() { req }: GqlContext) {
-		return this.sessionService.findCurrent(req)
+    return this.sessionService.findCurrent(req)
 	}
 
   @Mutation(() => AuthModel, { name: 'loginUser' })
