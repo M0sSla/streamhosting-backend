@@ -8,10 +8,11 @@ import { RawBodyMiddleware } from '@/src/shared/middlewares/raw-body.middleware'
 
 import { WebhookController } from './webhook.controller'
 import { WebhookService } from './webhook.service'
+import { NotificationService } from '../notification/notification.service'
 
 @Module({
 	controllers: [WebhookController],
-	providers: [WebhookService, /*NotificationService, TelegramService*/]
+	providers: [WebhookService, NotificationService, /*TelegramService*/]
 })
 export class WebhookModule {
 	public configure(cosumer: MiddlewareConsumer) {
