@@ -3,6 +3,7 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { SocialLinkModel } from "../../profile/models/social-link.model";
 import { User } from "@/prisma/generated";
 import { StreamModel } from "@/src/modules/stream/models/stream.model";
+import { FollowModel } from "@/src/modules/follow/models/follow.model";
 
 @ObjectType()
 export class UserModel implements User {
@@ -50,6 +51,24 @@ export class UserModel implements User {
 
     @Field(() => StreamModel)
     public stream: StreamModel
+
+	// @Field(() => [NotificationModel])
+	// public notifications: NotificationModel[]
+
+	// @Field(() => NotificationSettingsModel)
+	// public notificationSettings: NotificationSettingsModel
+
+    @Field(() => [FollowModel])
+	public followers: FollowModel[]
+
+	@Field(() => [FollowModel])
+	public followings: FollowModel[]
+
+	// @Field(() => [PlanModel])
+	// public sponsorshipPlans: PlanModel[]
+
+	// @Field(() => [SubscriptionModel])
+	// public sponsorshipSubscriptions: SubscriptionModel[]
     
     @Field(() => Date)
     public createdAt: Date
