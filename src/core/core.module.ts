@@ -26,6 +26,7 @@ import { ChatModule } from '../modules/chat/chat.module';
 import { FollowModule } from '../modules/follow/follow.module';
 import { ChannelModule } from '../modules/channel/channel.module';
 import { NotificationModule } from '../modules/notification/notification.module';
+import { TelegramModule } from '../modules/libs/telegram/telegram.module';
 
 @Module({
   imports: [
@@ -49,6 +50,8 @@ import { NotificationModule } from '../modules/notification/notification.module'
 			useFactory: getLiveKitConfig,
 			inject: [ConfigService]
 		}),
+    LivekitModule,
+    TelegramModule,
     AccountModule,
     ProfileModule,
     SessionModule,
