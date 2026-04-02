@@ -7,6 +7,8 @@ import { PasswordRecoveryTemplate } from './templates/password-recovery.template
 import type { SessionMetadata } from '@/src/shared/types/session-metadata.types';
 import { DeactivateTemplate } from './templates/deactivate.template';
 import { AccountDeletionTemplate } from './templates/account-deletion.template';
+import { VerifyChannelTemplate } from './templates/verify-channel.template';
+import { EnableTwoFactorTemplate } from './templates/enable-two-factor.template';
 
 @Injectable()
 export class MailService {
@@ -30,7 +32,7 @@ export class MailService {
         token: string, 
         metadata: SessionMetadata
     ) {
-        const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN') || 'http://localhost:3000';
+        const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN');
         const html = await render(PasswordRecoveryTemplate({ domain, token, metadata }));
         this.sendMail(email, 'Сброс пароля', html);
     }
@@ -40,16 +42,28 @@ export class MailService {
         token: string, 
         metadata: SessionMetadata
     ) {
-        const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN') || 'http://localhost:3000';
         const html = await render(DeactivateTemplate({ token, metadata }));
         this.sendMail(email, 'Деактивация аккаунта', html);
     }
 
     public async sendAccountDeletion(email: string) {
-        const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN') || 'http://localhost:3000';
+        const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN');
         const html = await render(AccountDeletionTemplate({ domain }));
         this.sendMail(email, 'Аккаунт удалён', html);
     }
+
+    	public async sendEnableTwoFactor(email: string) {
+		const domain = this.configService.getOrThrow<string>('ALLOWED_ORIGIN')
+		const html = await render(EnableTwoFactorTemplate({ domain }))
+
+		return this.sendMail(email, 'Обеспечьте свою безопасность', html)
+	}
+
+	public async sendVerifyChannel(email: string) {
+		const html = await render(VerifyChannelTemplate())
+
+		return this.sendMail(email, 'Ваш канал верифицирован', html)
+	}
 
     private sendMail(email: string, subject: string, html: string) {
         return this.mailerService.sendMail({
