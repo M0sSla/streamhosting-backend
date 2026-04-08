@@ -19,25 +19,39 @@ async function bootstrap() {
 
   app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')))
   app.use(config.getOrThrow<string>('GRAPHQL_PREFIX'), graphqlUploadExpress())
-
+  
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true
     })
   )
 
+  const sessionDomain = config.get<string>('SESSION_DOMAIN')
+  const cookieOptions: session.CookieOptions = {
+    // domain: config.getOrThrow<string>('SESSION_DOMAIN'),
+    // Temporarily do not force a cookie domain for localhost-based development.
+    ...(sessionDomain && sessionDomain !== 'localhost'
+      ? { domain: sessionDomain }
+      : {}),
+    maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
+    httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
+    secure: parseBoolean(config.getOrThrow<string>('SESSION_SECURE')),
+    sameSite: 'lax'
+  }
+
   app.use(session({
     secret: config.getOrThrow<string>('SESSION_SECRET'),
     name: config.getOrThrow<string>('SESSION_NAME'),
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      domain: config.getOrThrow<string>('SESSION_DOMAIN'),
-      maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
-      httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
-      secure: parseBoolean(config.getOrThrow<string>('SESSION_SECURE')),
-      sameSite: 'lax'
-    },
+    // cookie: {
+    //   domain: config.getOrThrow<string>('SESSION_DOMAIN'),
+    //   maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
+    //   httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
+    //   secure: parseBoolean(config.getOrThrow<string>('SESSION_SECURE')),
+    //   sameSite: 'lax'
+    // },
+    cookie: cookieOptions,
     store: new RedisStore({
       client: redis,
       prefix: config.getOrThrow<string>('SESSION_FOLDER')
@@ -46,7 +60,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
-    credential: true,
+    credentials: true,
     exposedHeaders: ['set-cookie']
   })
 

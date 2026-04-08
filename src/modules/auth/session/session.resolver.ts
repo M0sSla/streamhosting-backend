@@ -1,6 +1,5 @@
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { SessionService } from './session.service';
-import { UserModel } from '../account/models/user.model';
 import { GqlContext } from '@/src/shared/types/gql-context.types';
 import { LoginInput } from './inputs/login.input';
 import { UserAgent } from '@/src/shared/decorators/user-agent.decorator';
@@ -34,13 +33,11 @@ export class SessionResolver {
     return this.sessionService.login(req, input, userAgent)
   }
 
-  @Authorization()
-  @Mutation(() => UserModel, { name: 'logoutUser' })
-  public async logout(
-    @Context() { req }: GqlContext
-  ) {
-    return this.sessionService.logout(req)
-  }
+	@Authorization()
+	@Mutation(() => Boolean, { name: 'logoutUser' })
+	public async logout(@Context() { req }: GqlContext) {
+		return this.sessionService.logout(req)
+	}
 
   @Mutation(() => Boolean, { name: 'clearSessionCookie' })
 	public async clearSession(@Context() { req }: GqlContext) {

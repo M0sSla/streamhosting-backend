@@ -16,47 +16,49 @@ export class VerificationService {
     ) {}
 
     public async verify(
-        req: Request, 
-        input: VerificationInput, 
-        userAgent: string
-    ) {
-        const { token } = input
-        const existingToken = await this.prismaService.token.findUnique({
-            where: {
-                token,
-                type : TokenType.EMAIL_VERIFY
-            }
-        })
-        if (!existingToken) {
-            throw new NotFoundException('Токен не найден')
-        }
+		req: Request,
+		input: VerificationInput,
+		userAgent: string
+	) {
+		const { token } = input
 
-        const hasExpired = new Date(existingToken.expiresIn) < new Date()
+		const existingToken = await this.prismaService.token.findUnique({
+			where: {
+				token,
+				type: TokenType.EMAIL_VERIFY
+			}
+		})
 
-        if (hasExpired) {
-            throw new BadRequestException('Токен истёк')
-        }
+		if (!existingToken) {
+			throw new NotFoundException('Токен не найден')
+		}
 
-        const user = await this.prismaService.user.update({
-            where: {
-                id: existingToken.userId ?? undefined
-            },
-            data: {
-                isEmailVerified: true
-            }
-        })
+		const hasExpired = new Date(existingToken.expiresIn) < new Date()
 
-        await this.prismaService.token.delete({
-            where: {
-                id: existingToken.id,
-                type: TokenType.EMAIL_VERIFY
-            }
-        })
+		if (hasExpired) {
+			throw new BadRequestException('Токен истёк')
+		}
 
-        const metadata = getSessionMetadata(req, userAgent)
-        
-        return saveSession(req, user, metadata)
-    }
+		const user = await this.prismaService.user.update({
+			where: {
+				id: existingToken.userId!
+			},
+			data: {
+				isEmailVerified: true
+			}
+		})
+
+		await this.prismaService.token.delete({
+			where: {
+				id: existingToken.id,
+				type: TokenType.EMAIL_VERIFY
+			}
+		})
+
+		const metadata = getSessionMetadata(req, userAgent)
+
+		return saveSession(req, user, metadata)
+	}
 
     public async sendVerificationToken(user: User) {
         const verificationToken = await generateToken(
@@ -68,7 +70,7 @@ export class VerificationService {
         await this.mailService.sendVerificationEmail(
             user.email, 
             verificationToken.token
-        );
-        return true;
+        )
+        return true
     }
 }

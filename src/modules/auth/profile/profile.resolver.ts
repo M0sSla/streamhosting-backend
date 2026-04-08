@@ -2,8 +2,8 @@ import { Mutation, Resolver, Query } from '@nestjs/graphql';
 import { ProfileService } from './profile.service';
 import type { User } from '@/prisma/generated'
 import { Authorized } from '@/src/shared/decorators/authorized.decorator';
-import * as Upload from 'graphql-upload/Upload.js';
-import { GraphQLUpload } from 'graphql-upload/GraphQLUpload.js';
+import * as Upload from 'graphql-upload/Upload.js'
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js'
 import { Args } from '@nestjs/graphql';
 import { ChangeProfileInfoInput } from './inputs/change-profile-info.input';
 import { Authorization } from '@/src/shared/decorators/auth.decorator';
@@ -15,15 +15,15 @@ import { SocialLinkModel } from './models/social-link.model';
 export class ProfileResolver {
   public constructor(private readonly profileService: ProfileService) {}
 
-	// @Authorization()
-	// @Mutation(() => Boolean, { name: 'changeProfileAvatar' })
-	// public async changeAvatar(
-	// 	@Authorized() user: User,
-	// 	@Args('avatar', { type: () => GraphQLUpload }, FileValidationPipe)
-	// 	avatar: Upload
-	// ) {
-	// 	return this.profileService.changeAvatar(user, avatar)
-	// }
+	@Authorization()
+	@Mutation(() => Boolean, { name: 'changeProfileAvatar' })
+	public async changeAvatar(
+		@Authorized() user: User,
+		@Args('avatar', { type: () => GraphQLUpload }, FileValidationPipe)
+        avatar: Upload
+	) {
+		return this.profileService.changeAvatar(user, avatar)
+	}
 
   @Authorization()
   @Mutation(() => Boolean, { name: 'removeProfileAvatar' })

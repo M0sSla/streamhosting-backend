@@ -2,6 +2,7 @@ import { PrismaService } from '@/src/core/prisma/prisma.service';
 import { 
     ConflictException, 
     Injectable,
+	Logger,
 	UnauthorizedException } from '@nestjs/common';
 import { CreateUserInput } from './inputs/create-user.input';
 import { hash, verify } from 'argon2';
@@ -24,9 +25,12 @@ export class AccountService {
                 id
             },
             include: {
-                socialLinks: true
+                socialLinks: true,
+				stream: true,
+				notificationSettings: true
             }
         })
+        return user
     }
 
 

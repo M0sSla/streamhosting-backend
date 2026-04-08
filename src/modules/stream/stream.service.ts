@@ -4,7 +4,7 @@ import { FiltersInput } from './inputs/filters.input';
 import type { Prisma, User } from '@/prisma/generated'
 import { ChangeStreamInfoInput } from './inputs/change-stream-info.input';
 import * as Upload from 'graphql-upload/Upload.js'
-import * as sharp from 'sharp'
+import sharp from 'sharp';
 import { StorageService } from '../libs/storage/storage.service';
 import { GenerateStreamTokenInput } from './inputs/generate-stream-token.input';
 import { AccessToken } from 'livekit-server-sdk';
@@ -109,29 +109,29 @@ export class StreamService {
 
 		const fileName = `/streams/${user.username}.webp`
 
-		// if (file.filename && file.filename.endsWith('.gif')) {
-		// 	const processedBuffer = await sharp(buffer, { animated: true })
-		// 		.resize(1280, 720)
-		// 		.webp()
-		// 		.toBuffer()
+		if (file.filename && file.filename.endsWith('.gif')) {
+			const processedBuffer = await sharp(buffer, { animated: true })
+				.resize(1280, 720)
+				.webp()
+				.toBuffer()
 
-		// 	await this.storageService.upload(
-		// 		processedBuffer,
-		// 		fileName,
-		// 		'image/webp'
-		// 	)
-		// } else {
-		// 	const processedBuffer = await sharp(buffer)
-		// 		.resize(1280, 720)
-		// 		.webp()
-		// 		.toBuffer()
+			await this.storageService.upload(
+				fileName,
+				processedBuffer,
+				'image/webp'
+			)
+		} else {
+			const processedBuffer = await sharp(buffer)
+				.resize(1280, 720)
+				.webp()
+				.toBuffer()
 
-		// 	await this.storageService.upload(
-		// 		processedBuffer,
-		// 		fileName,
-		// 		'image/webp'
-		// 	)
-		// }
+			await this.storageService.upload(
+				fileName,
+				processedBuffer,
+				'image/webp'
+			)
+		}
 
 		await this.prismaService.stream.update({
 			where: {
@@ -243,7 +243,14 @@ export class StreamService {
                         }
                     }
                 },
-                // Категория
+                {
+                    category: {
+                        title: {
+                            contains: searchTerm,
+                            mode: 'insensitive',
+                        }
+                    }
+                }
             ]
         }
     }
