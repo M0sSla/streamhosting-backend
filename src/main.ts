@@ -11,6 +11,14 @@ import { RedisService } from './core/redis/redis.service'
 
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js'
 
+function normalizeOrigin(origin: string) {
+  try {
+    return new URL(origin).origin
+  } catch {
+    return origin.replace(/\/$/, '')
+  }
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(CoreModule, { rawBody: true })
 
@@ -25,11 +33,24 @@ async function bootstrap() {
   const allowedOrigins = config
     .getOrThrow<string>('ALLOWED_ORIGIN')
     .split(',')
-    .map(origin => origin.trim())
+    .map(origin => normalizeOrigin(origin.trim()))
     .filter(Boolean)
 
+  const allowedOriginSet = new Set([
+    ...allowedOrigins,
+    'https://streamhosting.ru',
+    'https://www.streamhosting.ru'
+  ])
+
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOriginSet.has(normalizeOrigin(origin))) {
+        callback(null, true)
+        return
+      }
+
+      callback(null, false)
+    },
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Apollo-Require-Preflight'],
