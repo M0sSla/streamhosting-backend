@@ -16,6 +16,11 @@ async function bootstrap() {
 
   const config = app.get(ConfigService)
   const redis = app.get(RedisService)
+  const isSessionSecure = parseBoolean(config.getOrThrow<string>('SESSION_SECURE'))
+
+  if (isSessionSecure) {
+    app.getHttpAdapter().getInstance().set('trust proxy', 1)
+  }
 
   const allowedOrigins = config
     .getOrThrow<string>('ALLOWED_ORIGIN')
@@ -49,7 +54,7 @@ async function bootstrap() {
       : {}),
     maxAge: ms(config.getOrThrow<StringValue>('SESSION_MAX_AGE')),
     httpOnly: parseBoolean(config.getOrThrow<string>('SESSION_HTTP_ONLY')),
-    secure: parseBoolean(config.getOrThrow<string>('SESSION_SECURE')),
+    secure: isSessionSecure,
     sameSite: 'lax'
   }
 
@@ -58,6 +63,7 @@ async function bootstrap() {
     name: config.getOrThrow<string>('SESSION_NAME'),
     resave: false,
     saveUninitialized: false,
+    proxy: isSessionSecure,
     cookie: cookieOptions,
     store: new RedisStore({
       client: redis,
