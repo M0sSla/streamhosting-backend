@@ -16,6 +16,17 @@ async function bootstrap() {
 
   const config = app.get(ConfigService)
   const redis = app.get(RedisService)
+  const allowedOrigins = config
+    .getOrThrow<string>('ALLOWED_ORIGIN')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean)
+
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    exposedHeaders: ['set-cookie']
+  })
 
   app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')))
   app.use(config.getOrThrow<string>('GRAPHQL_PREFIX'), graphqlUploadExpress())
@@ -28,7 +39,7 @@ async function bootstrap() {
 
   const sessionDomain = config.get<string>('SESSION_DOMAIN')
   const cookieOptions: session.CookieOptions = {
-    // domain: config.getOrThrow<string>('SESSION_DOMAIN'),
+    domain: config.getOrThrow<string>('SESSION_DOMAIN'),
     // Temporarily do not force a cookie domain for localhost-based development.
     ...(sessionDomain && sessionDomain !== 'localhost'
       ? { domain: sessionDomain }
@@ -57,12 +68,6 @@ async function bootstrap() {
       prefix: config.getOrThrow<string>('SESSION_FOLDER')
     })
   }))
-
-  app.enableCors({
-    origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
-    credentials: true,
-    exposedHeaders: ['set-cookie']
-  })
 
   await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
 }
